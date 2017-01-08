@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-if (isDir('./lib')) {
+if (isDir(__dirname + '/lib')) {
    module.exports = require('./lib');
 } else {
    module.exports = require('./src');
