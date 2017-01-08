@@ -4,66 +4,108 @@ import {assert} from 'chai';
 import generateUUID from '../../../src/utils/generateUUID';
 import compareImages from '../../helper/compareImages';
 
+try {
+  const browser = require('protractor').browser;
+
+  browser.ignoreSynchronization = true;
+  browser.url = browser.get;
+  browser.pause = browser.sleep;
+  browser.setViewportSize = async function ({ width, height }) {
+    const heightDelta = await browser.executeScript(function () {
+      return window.outerHeight - window.innerHeight;
+    });
+    browser.driver.manage().window().setSize(width, height + heightDelta);
+  };
+} catch (e) {
+  // ignore
+}
+
 const tmpDir = path.join(process.cwd(), '.tmp');
 
 const fixtureDir = path.join(process.cwd(), 'test/fixture');
 const screenshotDir = path.join(fixtureDir, '/web/screenshots');
 
-const screenStaticDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-document-480.png'));
-const screenStaticDocument1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-document-1600.png'));
-const screenStaticElemenentFooter = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-element-footer.png'));
-const screenStaticViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-viewport-480.png'));
-const screenStaticViewport1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-viewport-1600.png'));
-
-const screenResponsiveDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-document-480.png'));
-const screenResponsiveDocument1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-document-1600.png'));
-const screenResponsiveElemenentFooter480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-element-footer-480.png'));
-const screenResponsiveElemenentFooter1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-element-footer-1600.png'));
-const screenResponsiveViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-viewport-480.png'));
-const screenResponsiveViewport1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-viewport-1600.png'));
-
-const screenResponsiveMinWidthDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-document-480.png'));
-const screenResponsiveMinWidthDocument1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-document-1600.png'));
-const screenResponsiveMinWidthElemenentFooter = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-element-footer.png'));
-const screenResponsiveMinWidthViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-viewport-480.png'));
-const screenResponsiveMinWidthViewport1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-viewport-1600.png'));
-
-const screenDynamicSizeDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-dynamic-size-document-480.png'));
-const screenDynamicSizeViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-dynamic-size-viewport-480.png'));
-const screenDynamicSizeElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-dynamic-size-element-480.png'));
-
-const screenOverlayDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-overlay-document-480.png'));
-const screenOverlayViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-overlay-viewport-480.png'));
-const screenOverlayElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-overlay-element-480.png'));
-
-const screenFullpageModalDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-fullpage-modal-document-480.png'));
-const screenFullpageModalViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-fullpage-modal-viewport-480.png'));
-
-const screenElementModifierHideDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-hide-document-480.png'));
-const screenElementModifierHideViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-hide-viewport-480.png'));
-const screenElementModifierHideElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-hide-element-480.png'));
-
-const screenElementModifierRemoveDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-remove-document-480.png'));
-const screenElementModifierRemoveViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-remove-viewport-480.png'));
-const screenElementModifierRemoveElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-remove-element-480.png'));
-
-function isIE() {
-  const { browserName } = browser.desiredCapabilities;
-  return browserName === 'internet explorer';
-}
-
-function getBrowserSpecificFile(screenshotPath) {
-  const dir = path.dirname(screenshotPath);
-  const ext = path.extname(screenshotPath);
-  const file = path.basename(screenshotPath, ext);
-
-  if (isIE()) {
-    return path.join(dir, `${file}_ie${ext}`);
-  }
-  return screenshotPath;
-}
-
 describe('integration tests for desktop browsers', function () {
+
+  let browserName;
+
+  let screenStaticDocument480;
+  let screenStaticDocument1600;
+  let screenStaticElemenentFooter;
+  let screenStaticViewport480;
+  let screenStaticViewport1600;
+  let screenResponsiveDocument480;
+  let screenResponsiveDocument1600;
+  let screenResponsiveElemenentFooter480;
+  let screenResponsiveElemenentFooter1600;
+  let screenResponsiveViewport480;
+  let screenResponsiveViewport1600;
+  let screenResponsiveMinWidthDocument480;
+  let screenResponsiveMinWidthDocument1600;
+  let screenResponsiveMinWidthElemenentFooter;
+  let screenResponsiveMinWidthViewport480;
+  let screenResponsiveMinWidthViewport1600;
+  let screenDynamicSizeDocument480;
+  let screenDynamicSizeViewport480;
+  let screenDynamicSizeElement480;
+  let screenOverlayDocument480;
+  let screenOverlayViewport480;
+  let screenOverlayElement480;
+  let screenFullpageModalDocument480;
+  let screenFullpageModalViewport480;
+  let screenElementModifierHideDocument480;
+  let screenElementModifierHideViewport480;
+  let screenElementModifierHideElement480;
+  let screenElementModifierRemoveDocument480;
+  let screenElementModifierRemoveViewport480;
+  let screenElementModifierRemoveElement480;
+
+  beforeEach(async function () {
+    const capabilities = await Promise.resolve(browser.capabilities || browser.getCapabilities());
+    browserName = capabilities.browserName;
+
+    screenStaticDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-document-480.png'));
+    screenStaticDocument1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-document-1600.png'));
+    screenStaticElemenentFooter = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-element-footer.png'));
+    screenStaticViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-viewport-480.png'));
+    screenStaticViewport1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-static-viewport-1600.png'));
+
+    screenResponsiveDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-document-480.png'));
+    screenResponsiveDocument1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-document-1600.png'));
+    screenResponsiveElemenentFooter480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-element-footer-480.png'));
+    screenResponsiveElemenentFooter1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-element-footer-1600.png'));
+    screenResponsiveViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-viewport-480.png'));
+    screenResponsiveViewport1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-viewport-1600.png'));
+
+    screenResponsiveMinWidthDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-document-480.png'));
+    screenResponsiveMinWidthDocument1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-document-1600.png'));
+    screenResponsiveMinWidthElemenentFooter = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-element-footer.png'));
+    screenResponsiveMinWidthViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-viewport-480.png'));
+    screenResponsiveMinWidthViewport1600 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-responsive-min-width-viewport-1600.png'));
+
+    screenDynamicSizeDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-dynamic-size-document-480.png'));
+    screenDynamicSizeViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-dynamic-size-viewport-480.png'));
+    screenDynamicSizeElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-dynamic-size-element-480.png'));
+
+    screenOverlayDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-overlay-document-480.png'));
+    screenOverlayViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-overlay-viewport-480.png'));
+    screenOverlayElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-overlay-element-480.png'));
+
+    screenFullpageModalDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-fullpage-modal-document-480.png'));
+    screenFullpageModalViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-fullpage-modal-viewport-480.png'));
+
+    screenElementModifierHideDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-hide-document-480.png'));
+    screenElementModifierHideViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-hide-viewport-480.png'));
+    screenElementModifierHideElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-hide-element-480.png'));
+
+    screenElementModifierRemoveDocument480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-remove-document-480.png'));
+    screenElementModifierRemoveViewport480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-remove-viewport-480.png'));
+    screenElementModifierRemoveElement480 = getBrowserSpecificFile(path.join(screenshotDir, 'desktop-element-modifier-remove-element-480.png'));
+  });
+
+  after(async function () {
+    browser.close();
+  });
 
   context('static sites - static.html', function () {
     beforeEach(async function () {
@@ -77,7 +119,6 @@ describe('integration tests for desktop browsers', function () {
 
         await browser.setViewportSize({width: 480, height: 500});
         await browser.pause(500);
-
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenStaticDocument480);
@@ -469,6 +510,21 @@ describe('integration tests for desktop browsers', function () {
     });
 
   });
+
+  function isIE() {
+    return browserName === 'internet explorer';
+  }
+
+  function getBrowserSpecificFile(screenshotPath) {
+    const dir = path.dirname(screenshotPath);
+    const ext = path.extname(screenshotPath);
+    const file = path.basename(screenshotPath, ext);
+
+    if (isIE()) {
+      return path.join(dir, `${file}_ie${ext}`);
+    }
+    return screenshotPath;
+  }
 
   // context.only('take screenshots', function () {
   //   context('responsive sites - responsive.html', function () {

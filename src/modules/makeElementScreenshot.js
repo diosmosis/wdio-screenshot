@@ -4,6 +4,7 @@ import makeAreaScreenshot from './makeAreaScreenshot';
 import beforeScreenshot from './beforeScreenshot';
 import afterScreenshot from './afterScreenshot';
 
+import selectorExecute from '../utils/selectorExecute';
 import groupBoundingRect from '../utils/groupBoundingRect';
 import getBoundingRects from '../scripts/getBoundingRects';
 
@@ -17,7 +18,7 @@ export default async function makeElementScreenshot(browser, elementSelector, op
   await beforeScreenshot(browser, options);
 
   // get bounding rect of elements
-  const boundingRects = await browser.selectorExecute(elementSelector, getBoundingRects);
+  const boundingRects = await selectorExecute(browser, elementSelector, getBoundingRects);
   const boundingRect = groupBoundingRect(boundingRects);
 
   // make screenshot of area

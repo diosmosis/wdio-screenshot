@@ -17,7 +17,7 @@ const tmpDir = path.join(__dirname, '..', '..', '.tmp');
 export default async function makeAreaScreenshot(browser, startX, startY, endX, endY) {
   log('requested a screenshot for the following area: %j', {startX, startY, endX, endY});
 
-  const screenDimensions = (await browser.execute(getScreenDimensions)).value;
+  const screenDimensions = await browser.executeScript(getScreenDimensions);
   log('detected screenDimensions %j', screenDimensions);
   const screenDimension = new ScreenDimension(screenDimensions, browser);
 
@@ -34,19 +34,19 @@ export default async function makeAreaScreenshot(browser, startX, startY, endX, 
     const cropImages = [];
 
     log('set page height to %s px', screenDimension.getDocumentHeight());
-    await browser.execute(pageHeight, `${screenDimension.getDocumentHeight()}px`);
+    await browser.executeScript(pageHeight, `${screenDimension.getDocumentHeight()}px`);
 
     let loop = false;
     do {
       const { x, y, indexX, indexY } = screenshotStrategy.getScrollPosition();
       log('scroll to coordinates x: %s, y: %s for index x: %s, y: %s', x, y, indexX, indexY);
 
-      await browser.execute(virtualScroll, x, y, false);
+      await browser.executeScript(virtualScroll, x, y, false);
       await browser.pause(100);
 
       const filePath = path.join(dir, `${indexY}-${indexX}.png`);
 
-      const base64Screenshot = (await browser.screenshot()).value;
+      const base64Screenshot = await browser.takeScreenshot();
 
       const cropDimensions = screenshotStrategy.getCropDimensions();
       log('crop screenshot with width: %s, height: %s, offsetX: %s, offsetY: %s', cropDimensions.getWidth(), cropDimensions.getHeight(), cropDimensions.getX(), cropDimensions.getY());
@@ -66,10 +66,10 @@ export default async function makeAreaScreenshot(browser, startX, startY, endX, 
     } while (loop)
 
     log('reset page height');
-    await browser.execute(pageHeight, '');
+    await browser.executeScript(pageHeight, '');
 
     log('revert scroll to x: %s, y: %s', 0, 0);
-    await browser.execute(virtualScroll, 0, 0, true);
+    await browser.executeScript(virtualScroll, 0, 0, true);
 
     const mergedBase64Screenshot = await mergeImages(cropImages);
 
