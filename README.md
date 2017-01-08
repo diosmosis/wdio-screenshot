@@ -1,35 +1,32 @@
-# wdio-screenshot
-> A WebdriverIO plugin. Additional commands for taking screenshots with WebdriverIO.
-
-[![Build Status][build-badge]][build] [![Build Status Windows][build-windows-badge]][build-windows] [![npm package][npm-badge]][npm]
-
-[![Build Status](https://saucelabs.com/open_sauce/build_matrix/zinserjan.svg)](https://saucelabs.com/u/zinserjan)
-
+# wdio-screenshot-protractor
+> Port of wdio-screenshot for Protractor.
 
 ## Installation
 
-
-Install wdio-screenshot via NPM as usual:
-
-```sh
-$ npm install wdio-screenshot --save-dev
-```
-
-
-Instructions on how to install `WebdriverIO` can be found [here.](http://webdriver.io/guide/getstarted/install.html)
+Install wdio-screenshot via NPM through git URL to this repo.
 
 Note: If you want to improve performance, you can [install GraphicsMagick](#use-graphicsmagick).
 
 ## Configuration
-Setup wdio-screenshot by adding a `wdio-screenshot` key to the plugins section of your WebdriverIO config.
+
+Add the following to your protractor config:
 
 ```js
-// wdio.conf.js
+// protractor.conf.js
+
+var saveDocumentScreenshot = require('../../src/commands/saveDocumentScreenshot');
+var saveElementScreenshot = require('../../src/commands/saveElementScreenshot');
+var saveViewportScreenshot = require('../../src/commands/saveViewportScreenshot');
+
 exports.config = {
   // ...
-  plugins: {
-    'wdio-screenshot': {}
+    onPrepare: function() {
+    // Add wdio-screenshot methods to the browser object (super hacky, but it works)
+    browser.saveDocumentScreenshot = saveDocumentScreenshot;
+    browser.saveElementScreenshot = saveElementScreenshot;
+    browser.saveViewportScreenshot = saveViewportScreenshot;
   },
+
   // ...
 };
 ```
