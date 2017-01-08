@@ -2,20 +2,13 @@ import path from 'path';
 import {assert} from 'chai';
 
 import generateUUID from '../../../src/utils/generateUUID';
+import setViewportSize from '../../../src/utils/setViewportSize';
 import compareImages from '../../helper/compareImages';
 
 try {
   const browser = require('protractor').browser;
 
   browser.ignoreSynchronization = true;
-  browser.url = browser.get;
-  browser.pause = browser.sleep;
-  browser.setViewportSize = async function ({ width, height }) {
-    const heightDelta = await browser.executeScript(function () {
-      return window.outerHeight - window.innerHeight;
-    });
-    browser.driver.manage().window().setSize(width, height + heightDelta);
-  };
 } catch (e) {
   // ignore
 }
@@ -109,16 +102,16 @@ describe('integration tests for desktop browsers', function () {
 
   context('static sites - static.html', function () {
     beforeEach(async function () {
-      await browser.url('/static.html');
-      await browser.pause(3000);
+      await browser.get('/static.html');
+      await browser.sleep(3000);
     });
 
     context('saveDocumentScreenshot', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-static-document-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenStaticDocument480);
@@ -127,8 +120,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600', async function () {
         const screenPath = path.join(tmpDir, '/desktop-static-document-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenStaticDocument1600);
@@ -140,8 +133,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-static-element-footer', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '.footer');
 
         await compareImages(screenPath, screenStaticElemenentFooter);
@@ -150,8 +143,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-static-element-footer', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '.footer');
 
         await compareImages(screenPath, screenStaticElemenentFooter);
@@ -163,8 +156,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-static-viewport-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenStaticViewport480);
@@ -173,8 +166,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600', async function () {
         const screenPath = path.join(tmpDir, '/desktop-static-viewport-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenStaticViewport1600);
@@ -184,16 +177,16 @@ describe('integration tests for desktop browsers', function () {
 
   context('responsive sites - responsive.html', function () {
     beforeEach(async function () {
-      await browser.url('/responsive.html');
-      await browser.pause(3000);
+      await browser.get('/responsive.html');
+      await browser.sleep(3000);
     });
 
     context('saveDocumentScreenshot', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-document-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
 
         await browser.saveDocumentScreenshot(screenPath);
 
@@ -203,8 +196,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-document-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenResponsiveDocument1600);
@@ -216,8 +209,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-element-footer-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '.footer');
 
         await compareImages(screenPath, screenResponsiveElemenentFooter480);
@@ -226,8 +219,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-element-footer-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '.footer');
 
         await compareImages(screenPath, screenResponsiveElemenentFooter1600);
@@ -239,8 +232,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-viewport-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenResponsiveViewport480);
@@ -249,8 +242,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-viewport-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenResponsiveViewport1600);
@@ -260,16 +253,16 @@ describe('integration tests for desktop browsers', function () {
 
   context('responsive sites with min-width - responsive-min-width.html', function () {
     beforeEach(async function () {
-      await browser.url('/responsive-min-width.html');
-      await browser.pause(3000);
+      await browser.get('/responsive-min-width.html');
+      await browser.sleep(3000);
     });
 
     context('saveDocumentScreenshot', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-min-width-document-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
 
         await browser.saveDocumentScreenshot(screenPath);
 
@@ -279,8 +272,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-min-width-document-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenResponsiveMinWidthDocument1600);
@@ -292,8 +285,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-min-width-element-footer-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '.footer');
 
         await compareImages(screenPath, screenResponsiveMinWidthElemenentFooter);
@@ -302,8 +295,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-min-width-element-footer-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '.footer');
 
         await compareImages(screenPath, screenResponsiveMinWidthElemenentFooter);
@@ -315,8 +308,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-min-width-viewport-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenResponsiveMinWidthViewport480);
@@ -325,8 +318,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 1600', async function () {
         const screenPath = path.join(tmpDir, '/desktop-responsive-min-width-viewport-1600', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 1600, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 1600, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenResponsiveMinWidthViewport1600);
@@ -336,8 +329,8 @@ describe('integration tests for desktop browsers', function () {
 
   context('dynamic size issues - size-dynamic.html', function () {
     beforeEach(async function () {
-      await browser.url('/size-dynamic.html');
-      await browser.pause(3000);
+      await browser.get('/size-dynamic.html');
+      await browser.sleep(3000);
     });
 
     context('saveDocumentScreenshot', function () {
@@ -345,8 +338,8 @@ describe('integration tests for desktop browsers', function () {
       it('resizes elements properly', async function () {
         const screenPath = path.join(tmpDir, '/desktop-dynamic-size-document-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenDynamicSizeDocument480);
@@ -358,8 +351,8 @@ describe('integration tests for desktop browsers', function () {
       it('resizes elements properly', async function () {
         const screenPath = path.join(tmpDir, '/desktop-dynamic-size-viewport-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenDynamicSizeViewport480);
@@ -370,8 +363,8 @@ describe('integration tests for desktop browsers', function () {
       it('resizes elements properly', async function () {
         const screenPath = path.join(tmpDir, '/desktop-dynamic-size-element-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '#dynamic-box');
 
         await compareImages(screenPath, screenDynamicSizeElement480);
@@ -381,16 +374,16 @@ describe('integration tests for desktop browsers', function () {
 
   context('overlay - overlay.html', function () {
     beforeEach(async function () {
-      await browser.url('/overlay.html');
-      await browser.pause(3000);
+      await browser.get('/overlay.html');
+      await browser.sleep(3000);
     });
 
     context('saveDocumentScreenshot', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-overlay-document-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenOverlayDocument480);
@@ -401,8 +394,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-overlay-viewport-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenOverlayViewport480);
@@ -413,8 +406,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-overlay-element-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveElementScreenshot(screenPath, '#overlay-content');
 
         await compareImages(screenPath, screenOverlayElement480);
@@ -424,16 +417,16 @@ describe('integration tests for desktop browsers', function () {
 
   context('fullpage modal - fullpage-modal.html', function () {
     beforeEach(async function () {
-      await browser.url('/fullpage-modal.html');
-      await browser.pause(3000);
+      await browser.get('/fullpage-modal.html');
+      await browser.sleep(3000);
     });
 
     context('saveDocumentScreenshot', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-fullpage-modal-document-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveDocumentScreenshot(screenPath);
 
         await compareImages(screenPath, screenFullpageModalDocument480);
@@ -444,8 +437,8 @@ describe('integration tests for desktop browsers', function () {
       it('with window size 480px', async function () {
         const screenPath = path.join(tmpDir, '/desktop-fullpage-modal-viewport-480', `${generateUUID()}.png`);
 
-        await browser.setViewportSize({width: 480, height: 500});
-        await browser.pause(500);
+        await setViewportSize(browser, {width: 480, height: 500});
+        await browser.sleep(500);
         await browser.saveViewportScreenshot(screenPath);
 
         await compareImages(screenPath, screenFullpageModalViewport480);
@@ -455,10 +448,10 @@ describe('integration tests for desktop browsers', function () {
 
   context('element modifier - element-modifier.html', function () {
     beforeEach(async function () {
-      await browser.url('/element-modifier.html');
-      await browser.pause(3000);
-      await browser.setViewportSize({width: 480, height: 500});
-      await browser.pause(500);
+      await browser.get('/element-modifier.html');
+      await browser.sleep(3000);
+      await setViewportSize(browser, {width: 480, height: 500});
+      await browser.sleep(500);
     });
 
     context('hide', function() {
@@ -529,28 +522,28 @@ describe('integration tests for desktop browsers', function () {
   // context.only('take screenshots', function () {
   //   context('responsive sites - responsive.html', function () {
   //     beforeEach(async function () {
-  //       await browser.url('/responsive-min-width.html');
-  //       await browser.pause(3000);
+  //       await browser.get('/responsive-min-width.html');
+  //       await browser.sleep(3000);
   //     });
   //
   //     context('saveDocumentScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveDocumentScreenshot(screenResponsiveMinWidthDocument480);
   //       });
   //
   //       it('with window size 1600', async function () {
-  //         await browser.setViewportSize({width: 1600, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 1600, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveDocumentScreenshot(screenResponsiveMinWidthDocument1600);
   //       });
   //     });
   //
   //     context('saveElementScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveElementScreenshot(screenResponsiveMinWidthElemenentFooter, '.footer');
   //       });
   //
@@ -558,14 +551,14 @@ describe('integration tests for desktop browsers', function () {
   //
   //     context('saveViewportScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveViewportScreenshot(screenResponsiveMinWidthViewport480);
   //       });
   //
   //       it('with window size 1600', async function () {
-  //         await browser.setViewportSize({width: 1600, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 1600, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveViewportScreenshot(screenResponsiveMinWidthViewport1600);
   //       });
   //     });
@@ -573,48 +566,48 @@ describe('integration tests for desktop browsers', function () {
   //
   //   context('responsive sites - responsive.html', function () {
   //     beforeEach(async function () {
-  //       await browser.url('/responsive.html');
-  //       await browser.pause(3000);
+  //       await browser.get('/responsive.html');
+  //       await browser.sleep(3000);
   //     });
   //
   //     context('saveDocumentScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveDocumentScreenshot(screenResponsiveDocument480);
   //       });
   //
   //       it('with window size 1600', async function () {
-  //         await browser.setViewportSize({width: 1600, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 1600, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveDocumentScreenshot(screenResponsiveDocument1600);
   //       });
   //     });
   //
   //     context('saveElementScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveElementScreenshot(screenResponsiveElemenentFooter480, '.footer');
   //       });
   //
   //       it('with window size 1600', async function () {
   //         await browser.windowHandleSize({width: 1600, height: 500});
-  //         await browser.pause(500);
+  //         await browser.sleep(500);
   //         await browser.saveElementScreenshot(screenResponsiveElemenentFooter1600, '.footer');
   //       });
   //     });
   //
   //     context('saveViewportScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveViewportScreenshot(screenResponsiveViewport480);
   //       });
   //
   //       it('with window size 1600', async function () {
-  //         await browser.setViewportSize({width: 1600, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 1600, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveViewportScreenshot(screenResponsiveViewport1600);
   //       });
   //     });
@@ -623,28 +616,28 @@ describe('integration tests for desktop browsers', function () {
   //   context('static sites - static.html', function () {
   //     context('saveDocumentScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
-  //         await browser.url('/static.html');
-  //         await browser.pause(3000);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
+  //         await browser.get('/static.html');
+  //         await browser.sleep(3000);
   //         await browser.saveDocumentScreenshot(screenStaticDocument480);
   //       });
   //
   //       it('with window size 1600', async function () {
-  //         await browser.setViewportSize({width: 1600, height: 500});
-  //         await browser.pause(500);
-  //         await browser.url('/static.html');
-  //         await browser.pause(1000);
+  //         await setViewportSize(browser, {width: 1600, height: 500});
+  //         await browser.sleep(500);
+  //         await browser.get('/static.html');
+  //         await browser.sleep(1000);
   //         await browser.saveDocumentScreenshot(screenStaticDocument1600);
   //       });
   //     });
   //
   //     context('saveElementScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
-  //         await browser.url('/static.html');
-  //         await browser.pause(3000);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
+  //         await browser.get('/static.html');
+  //         await browser.sleep(3000);
   //         await browser.saveElementScreenshot(screenStaticElemenentFooter, '.footer');
   //       });
   //
@@ -652,18 +645,18 @@ describe('integration tests for desktop browsers', function () {
   //
   //     context('saveViewportScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
-  //         await browser.url('/static.html');
-  //         await browser.pause(3000);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
+  //         await browser.get('/static.html');
+  //         await browser.sleep(3000);
   //         await browser.saveViewportScreenshot(screenStaticViewport480);
   //       });
   //
   //       it('with window size 1600', async function () {
-  //         await browser.setViewportSize({width: 1600, height: 500});
-  //         await browser.pause(500);
-  //         await browser.url('/static.html');
-  //         await browser.pause(1000);
+  //         await setViewportSize(browser, {width: 1600, height: 500});
+  //         await browser.sleep(500);
+  //         await browser.get('/static.html');
+  //         await browser.sleep(1000);
   //         await browser.saveViewportScreenshot(screenStaticViewport1600);
   //       });
   //     });
@@ -671,15 +664,15 @@ describe('integration tests for desktop browsers', function () {
   //
   //   context('dynamic size issues - size-dynamic.html', function () {
   //     beforeEach(async function () {
-  //       await browser.url('/size-dynamic.html');
-  //       await browser.pause(3000);
+  //       await browser.get('/size-dynamic.html');
+  //       await browser.sleep(3000);
   //
   //     });
   //
   //     context('saveDocumentScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveDocumentScreenshot(screenDynamicSizeDocument480);
   //       });
   //     });
@@ -687,16 +680,16 @@ describe('integration tests for desktop browsers', function () {
   //     context('saveViewportScreenshot', function () {
   //
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveViewportScreenshot(screenDynamicSizeViewport480);
   //       });
   //     });
   //     context('saveElementScreenshot', function () {
   //
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveElementScreenshot(screenDynamicSizeElement480, '#dynamic-box');
   //       });
   //     });
@@ -704,15 +697,15 @@ describe('integration tests for desktop browsers', function () {
   //
   //   context('overlay - overlay.html', function () {
   //     beforeEach(async function () {
-  //       await browser.url('/overlay.html');
-  //       await browser.pause(3000);
+  //       await browser.get('/overlay.html');
+  //       await browser.sleep(3000);
   //
   //     });
   //
   //     context('saveDocumentScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveDocumentScreenshot(screenOverlayDocument480);
   //       });
   //     });
@@ -720,16 +713,16 @@ describe('integration tests for desktop browsers', function () {
   //     context('saveViewportScreenshot', function () {
   //
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveViewportScreenshot(screenOverlayViewport480);
   //       });
   //     });
   //     context('saveElementScreenshot', function () {
   //
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveElementScreenshot(screenOverlayElement480, '#overlay-content');
   //       });
   //     });
@@ -737,15 +730,15 @@ describe('integration tests for desktop browsers', function () {
   //
   //   context('fullpage modal - fullpage-modal.html', function () {
   //     beforeEach(async function () {
-  //       await browser.url('/fullpage-modal.html');
-  //       await browser.pause(3000);
+  //       await browser.get('/fullpage-modal.html');
+  //       await browser.sleep(3000);
   //
   //     });
   //
   //     context('saveDocumentScreenshot', function () {
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveDocumentScreenshot(screenFullpageModalDocument480);
   //       });
   //     });
@@ -753,8 +746,8 @@ describe('integration tests for desktop browsers', function () {
   //     context('saveViewportScreenshot', function () {
   //
   //       it('with window size 480px', async function () {
-  //         await browser.setViewportSize({width: 480, height: 500});
-  //         await browser.pause(500);
+  //         await setViewportSize(browser, {width: 480, height: 500});
+  //         await browser.sleep(500);
   //         await browser.saveViewportScreenshot(screenFullpageModalViewport480);
   //       });
   //     });
@@ -762,10 +755,10 @@ describe('integration tests for desktop browsers', function () {
   //
   //   context('element modifier - element-modifier.html', function () {
   //     beforeEach(async function () {
-  //       await browser.url('/element-modifier.html');
-  //       await browser.pause(3000);
-  //       await browser.setViewportSize({width: 480, height: 500});
-  //       await browser.pause(500);
+  //       await browser.get('/element-modifier.html');
+  //       await browser.sleep(3000);
+  //       await setViewportSize(browser, {width: 480, height: 500});
+  //       await browser.sleep(500);
   //     });
   //
   //     context('hide', function() {

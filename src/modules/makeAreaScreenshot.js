@@ -42,7 +42,7 @@ export default async function makeAreaScreenshot(browser, startX, startY, endX, 
       log('scroll to coordinates x: %s, y: %s for index x: %s, y: %s', x, y, indexX, indexY);
 
       await browser.executeScript(virtualScroll, x, y, false);
-      await browser.pause(100);
+      await browser.sleep(100);
 
       const filePath = path.join(dir, `${indexY}-${indexX}.png`);
 
