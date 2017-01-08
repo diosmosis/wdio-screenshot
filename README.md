@@ -14,9 +14,9 @@ Add the following to your protractor config:
 ```js
 // protractor.conf.js
 
-var saveDocumentScreenshot = require('wdio-screenshot/src/commands/saveDocumentScreenshot');
-var saveElementScreenshot = require('wdio-screenshot/src/commands/saveElementScreenshot');
-var saveViewportScreenshot = require('wdio-screenshot/src/commands/saveViewportScreenshot');
+var saveDocumentScreenshot = require('wdio-screenshot/commands/saveDocumentScreenshot');
+var saveElementScreenshot = require('wdio-screenshot/commands/saveElementScreenshot');
+var saveViewportScreenshot = require('wdio-screenshot/commands/saveViewportScreenshot');
 
 exports.config = {
   // ...
